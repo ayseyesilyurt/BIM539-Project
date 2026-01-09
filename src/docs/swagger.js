@@ -1,18 +1,21 @@
-import swaggerUi from "swagger-ui-express";
 import swaggerJSDoc from "swagger-jsdoc";
 
-export function setupSwagger(app) {
-  const options = {
-    definition: {
-      openapi: "3.0.3",
-      info: { title: "Kalite API", version: "1.0.0" },
-      servers: [{ url: "http://localhost:3000" }]
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "BIM539 Project API",
+      version: "1.0.0",
+      description: "REST API for categories, products, users, orders, reviews",
     },
-    apis: ["./src/routes/*.js"]
-  };
+    servers: [
+      { url: "http://localhost:3000", description: "Local server" },
+    ],
+  },
+  // Route dosyalarındaki JSDoc swagger comment'lerini okumak için:
+  apis: ["./src/routes/*.js", "./src/routes/**/*.js"],
+};
 
-  const spec = swaggerJSDoc(options);
+const swaggerSpec = swaggerJSDoc(options);
 
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(spec));
-  app.get("/api-docs.json", (req, res) => res.json(spec));
-}
+export default swaggerSpec;

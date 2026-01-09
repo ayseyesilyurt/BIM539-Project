@@ -1,19 +1,26 @@
 import express from "express";
 import morgan from "morgan";
+import cors from "cors";
 
 import routes from "./routes/index.js";
-import { setupSwagger } from "./docs/swagger.js";
+
+// ✅ Swagger
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./docs/swagger.js";
 
 export const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
-// Swagger UI
-setupSwagger(app);
+// ✅ Swagger UI
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Routes
 app.use("/api", routes);
 
-// 404
-app.use((req, res) => res.status(404).json({ message: "Not Found" }));
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+export default app;
