@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1767963336985" clover="3.2.0">
-  <project timestamp="1767963336985" name="All files">
-    <metrics statements="428" coveredstatements="379" conditionals="160" coveredconditionals="102" methods="90" coveredmethods="89" elements="678" coveredelements="570" complexity="0" loc="428" ncloc="428" packages="8" files="31" classes="31"/>
+<coverage generated="1767963764319" clover="3.2.0">
+  <project timestamp="1767963764319" name="All files">
+    <metrics statements="431" coveredstatements="379" conditionals="160" coveredconditionals="102" methods="91" coveredmethods="89" elements="682" coveredelements="570" complexity="0" loc="431" ncloc="431" packages="8" files="32" classes="32"/>
     <package name="src">
-      <metrics statements="8" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+      <metrics statements="11" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
       <file name="app.js" path="C:\Users\aysey\OneDrive\Masaüstü\BIM539-Project\src\app.js">
         <metrics statements="8" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="11" count="7" type="stmt"/>
@@ -14,6 +14,12 @@
         <line num="20" count="7" type="stmt"/>
         <line num="22" count="7" type="stmt"/>
         <line num="23" count="0" type="stmt"/>
+      </file>
+      <file name="server.js" path="C:\Users\aysey\OneDrive\Masaüstü\BIM539-Project\src\server.js">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
       </file>
     </package>
     <package name="src.config">
