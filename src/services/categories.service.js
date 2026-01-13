@@ -19,8 +19,10 @@ export async function addCategory(payload) {
     const category = await repo.createCategory(parsed.data);
     return { data: category };
   } catch (e) {
-    // unique name violation vs.
-    return { error: { status: 400, message: "Category name already exists" } };
+    if (e && e.code === "23505") {
+      return { error: { status: 400, message: "Category name already exists" } };
+    }
+    throw e;
   }
 }
 

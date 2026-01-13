@@ -28,7 +28,7 @@ jobs:
     env:
       NODE_ENV: test
 
-      # DB_* (local ile aynı isimler)
+      # App env (DB_* seti)
       DB_HOST: localhost
       DB_PORT: "5432"
       DB_USER: postgres
@@ -36,7 +36,7 @@ jobs:
       DB_NAME: kalite_db
       TEST_DB_NAME: kalite_test_db
 
-      # PG_* (senin env.js’in eski hali bunu istiyordu; fallback’li yapsan bile sorun olmaz)
+      # Projede bazı yerler PG_* bekliyorsa diye (env.js tarafı)
       PG_HOST: localhost
       PG_PORT: "5432"
       PG_USER: postgres
@@ -86,21 +86,24 @@ jobs:
 
           CREATE TABLE IF NOT EXISTS categories (
             id SERIAL PRIMARY KEY,
-            name TEXT UNIQUE NOT NULL
+            name TEXT UNIQUE NOT NULL,
+            created_at TIMESTAMP DEFAULT NOW()
           );
 
           CREATE TABLE IF NOT EXISTS products (
             id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
             price NUMERIC NOT NULL,
-            category_id INT NOT NULL REFERENCES categories(id) ON DELETE RESTRICT
+            category_id INT NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
+            created_at TIMESTAMP DEFAULT NOW()
           );
 
           CREATE TABLE IF NOT EXISTS orders (
             id SERIAL PRIMARY KEY,
             user_id INT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
             total NUMERIC NOT NULL,
-            status TEXT NOT NULL
+            status TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT NOW()
           );
 
           CREATE TABLE IF NOT EXISTS reviews (
@@ -109,9 +112,11 @@ jobs:
             product_id INT NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
             rating INT NOT NULL,
             comment TEXT,
+            created_at TIMESTAMP DEFAULT NOW(),
             CONSTRAINT uniq_user_product UNIQUE(user_id, product_id)
           );
           SQL
 
       - name: Run coverage tests
         run: npm run test:cov
+        
