@@ -27,6 +27,15 @@ jobs:
 
     env:
       NODE_ENV: test
+
+      # ✅ app/src/config/env.js bunu bekliyor:
+      PG_HOST: localhost
+      PG_PORT: "5432"
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_DATABASE: bim539_test
+
+      # (opsiyonel) schema kurmak için psql bağlantısı:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bim539_test
 
     steps:
@@ -40,25 +49,27 @@ jobs:
       - name: Install deps
         run: npm ci
 
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
       - name: Wait for Postgres
         run: |
           for i in {1..30}; do
             if pg_isready -h localhost -p 5432 -U postgres -d bim539_test; then
               echo "Postgres is ready"
-              break
+              exit 0
             fi
             echo "Waiting Postgres..."
             sleep 1
           done
+          echo "Postgres did not become ready in time"
+          exit 1
 
-      
       - name: Create schema
         run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client
           psql "$DATABASE_URL" <<'SQL'
-          -- ÖRNEK şema: kendi tabloların farklıysa burada birebir projendeki şemayı yazmalısın.
-          -- Aşağıyı projendeki CREATE TABLE’lara göre düzenle (en doğrusu schema.sql dosyasından okutmak)
           CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             full_name TEXT NOT NULL,
