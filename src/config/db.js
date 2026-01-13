@@ -1,20 +1,13 @@
-import pg from "pg";
+import { Pool } from "pg";
 import { env } from "./env.js";
 
-const { Pool } = pg;
-
 const pool = new Pool({
-  host: env.dbHost,
-  port: env.dbPort,
-  user: env.dbUser,
-  password: env.dbPassword,
-  database: env.dbName,
+  host: env.db.host,
+  port: env.db.port,
+  user: env.db.user,
+  password: env.db.password,
+  database: env.db.database,
 });
 
-export function query(text, params) {
-  return pool.query(text, params);
-}
-
-export async function closeDb() {
-  await pool.end();
-}
+export const query = (text, params) => pool.query(text, params);
+export const closeDb = () => pool.end();

@@ -16,11 +16,11 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: bim539_test
+          POSTGRES_DB: kalite_test_db
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U postgres -d bim539_test"
+          --health-cmd="pg_isready -U postgres -d kalite_test_db"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -28,15 +28,16 @@ jobs:
     env:
       NODE_ENV: test
 
-      # ✅ app/src/config/env.js bunu bekliyor:
-      PG_HOST: localhost
-      PG_PORT: "5432"
-      PG_USER: postgres
-      PG_PASSWORD: postgres
-      PG_DATABASE: bim539_test
+      # App tarafının okuyacağı env'ler (DB_* seti)
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: kalite_db
+      TEST_DB_NAME: kalite_test_db
 
-      # (opsiyonel) schema kurmak için psql bağlantısı:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bim539_test
+      # Kolay psql bağlantısı için
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/kalite_test_db
 
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +58,7 @@ jobs:
       - name: Wait for Postgres
         run: |
           for i in {1..30}; do
-            if pg_isready -h localhost -p 5432 -U postgres -d bim539_test; then
+            if pg_isready -h localhost -p 5432 -U postgres -d kalite_test_db; then
               echo "Postgres is ready"
               exit 0
             fi
