@@ -2,13 +2,32 @@ name: Node CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: bim539_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d bim539_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bim539_test
 
     steps:
       - uses: actions/checkout@v4
@@ -18,5 +37,63 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - run: npm ci
-      - run: npm run test:cov
+      - name: Install deps
+        run: npm ci
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..30}; do
+            if pg_isready -h localhost -p 5432 -U postgres -d bim539_test; then
+              echo "Postgres is ready"
+              break
+            fi
+            echo "Waiting Postgres..."
+            sleep 1
+          done
+
+      
+      - name: Create schema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          psql "$DATABASE_URL" <<'SQL'
+          -- ÖRNEK şema: kendi tabloların farklıysa burada birebir projendeki şemayı yazmalısın.
+          -- Aşağıyı projendeki CREATE TABLE’lara göre düzenle (en doğrusu schema.sql dosyasından okutmak)
+          CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            full_name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            created_at TIMESTAMP DEFAULT NOW()
+          );
+
+          CREATE TABLE IF NOT EXISTS categories (
+            id SERIAL PRIMARY KEY,
+            name TEXT UNIQUE NOT NULL
+          );
+
+          CREATE TABLE IF NOT EXISTS products (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            price NUMERIC NOT NULL,
+            category_id INT NOT NULL REFERENCES categories(id) ON DELETE RESTRICT
+          );
+
+          CREATE TABLE IF NOT EXISTS orders (
+            id SERIAL PRIMARY KEY,
+            user_id INT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+            total NUMERIC NOT NULL,
+            status TEXT NOT NULL
+          );
+
+          CREATE TABLE IF NOT EXISTS reviews (
+            id SERIAL PRIMARY KEY,
+            user_id INT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+            product_id INT NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
+            rating INT NOT NULL,
+            comment TEXT,
+            CONSTRAINT uniq_user_product UNIQUE(user_id, product_id)
+          );
+          SQL
+
+      - name: Run coverage tests
+        run: npm run test:cov
