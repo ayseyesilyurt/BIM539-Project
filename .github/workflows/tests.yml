@@ -28,7 +28,7 @@ jobs:
     env:
       NODE_ENV: test
 
-
+      # DB_* (local ile aynı isimler)
       DB_HOST: localhost
       DB_PORT: "5432"
       DB_USER: postgres
@@ -36,6 +36,7 @@ jobs:
       DB_NAME: kalite_db
       TEST_DB_NAME: kalite_test_db
 
+      # PG_* (senin env.js’in eski hali bunu istiyordu; fallback’li yapsan bile sorun olmaz)
       PG_HOST: localhost
       PG_PORT: "5432"
       PG_USER: postgres
