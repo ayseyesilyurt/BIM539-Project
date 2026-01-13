@@ -22,10 +22,27 @@ export async function getById(req, res, next) {
 
 export async function create(req, res, next) {
   try {
-    const result = await service.addReview(req.body);
-    if (result.error) return res.status(result.error.status).json({ message: result.error.message });
+    const body = req.body ?? {};
+
+    const payload = {
+      userId: body.userId ?? body.user_id,
+      productId: body.productId ?? body.product_id,
+      rating: body.rating,
+      comment: body.comment,
+    };
+
+    const result = await service.addReview(payload);
+
+    if (result.error) {
+      return res.status(result.error.status).json({ message: result.error.message });
+    }
+
     res.status(201).json(result.data);
   } catch (e) {
+    // Postgres unique ihlali (reviews uniq_user_product)
+    if (String(e?.code) === "23505") {
+      return res.status(400).json({ message: "duplicate review" });
+    }
     next(e);
   }
 }

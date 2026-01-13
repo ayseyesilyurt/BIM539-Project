@@ -22,8 +22,19 @@ export async function getById(req, res, next) {
 
 export async function create(req, res, next) {
   try {
-    const result = await service.addCategory(req.body);
-    if (result.error) return res.status(result.error.status).json({ message: result.error.message });
+    const body = req.body ?? {};
+
+    // testler name gönderiyor. Sende farklı isim varsa onu da yakala.
+    const payload = {
+      name: body.name ?? body.category_name ?? body.categoryName,
+    };
+
+    const result = await service.addCategory(payload);
+
+    if (result.error) {
+      return res.status(result.error.status).json({ message: result.error.message });
+    }
+
     res.status(201).json(result.data);
   } catch (e) {
     next(e);

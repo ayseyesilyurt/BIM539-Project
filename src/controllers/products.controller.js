@@ -22,8 +22,20 @@ export async function getById(req, res, next) {
 
 export async function create(req, res, next) {
   try {
-    const result = await service.addProduct(req.body);
-    if (result.error) return res.status(result.error.status).json({ message: result.error.message });
+    const body = req.body ?? {};
+
+    const payload = {
+      name: body.name ?? body.product_name ?? body.productName,
+      price: body.price,
+      categoryId: body.categoryId ?? body.category_id,
+    };
+
+    const result = await service.addProduct(payload);
+
+    if (result.error) {
+      return res.status(result.error.status).json({ message: result.error.message });
+    }
+
     res.status(201).json(result.data);
   } catch (e) {
     next(e);

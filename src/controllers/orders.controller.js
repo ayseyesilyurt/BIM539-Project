@@ -22,8 +22,20 @@ export async function getById(req, res, next) {
 
 export async function create(req, res, next) {
   try {
-    const result = await service.addOrder(req.body);
-    if (result.error) return res.status(result.error.status).json({ message: result.error.message });
+    const body = req.body ?? {};
+
+    const payload = {
+      userId: body.userId ?? body.user_id,
+      total: body.total,
+      status: body.status,
+    };
+
+    const result = await service.addOrder(payload);
+
+    if (result.error) {
+      return res.status(result.error.status).json({ message: result.error.message });
+    }
+
     res.status(201).json(result.data);
   } catch (e) {
     next(e);
