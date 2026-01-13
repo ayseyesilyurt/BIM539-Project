@@ -204,11 +204,14 @@ npm run test:unit
 Integration Tests
 Controller, service ve repository katmanları birlikte test edilir
 Gerçek HTTP istekleri kullanılır
+npm run test:integration
 
 End-to-End (E2E) Tests
 Gerçek kullanıcı senaryoları test edilir
 Birden fazla endpoint zincirleme çalıştırılır
 (örneğin: kullanıcı oluştur → ürün oluştur → sipariş oluştur)
+npm run test:e2e
+
 
 Test Coverage
 Coverage ölçümü Jest ile yapılmıştır:
