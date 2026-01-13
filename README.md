@@ -228,7 +228,7 @@ Proje, GitHub Actions ile CI pipeline içerir:
 Her push ve pull request’te testler otomatik çalışır
 Tüm test sonuçları action loglarında görülebilir
 Workflow dosyası:
-.github/workflows/ci.yml
+.github/workflows/tests.yml
 
 Teslim Notları:
 Repository public durumdadır
